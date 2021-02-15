@@ -1,0 +1,93 @@
+﻿@using ChartJs.Blazor.BarChart
+@using ChartJs.Blazor.Interop;
+@using ChartJs.Blazor.Common.Handlers
+@using ChartJs.Blazor.Common.Axes
+@using ChartJs.Blazor.Common.Axes.Ticks
+
+@if (_config != null)
+{
+    <div class="mt-4">
+        <Chart Config="_config"></Chart>
+    </div>
+}
+
+@code {
+
+    private BarConfig _config;
+
+    [Parameter]
+    public Question Question { get; set; }
+
+    [Parameter]
+    public Boolean ShowAsAbsolute { get; set; } = true;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Question == null)
+        {
+            return;
+        }
+
+        if (_config != null)
+        {
+            return;
+        }
+
+        _config = new BarConfig
+        {
+            Options = new BarOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = false,
+                },
+                Legend = new Legend
+                {
+                    Display = false,
+                },
+            },
+        };
+
+        foreach (var value in Question.Summery.Values)
+        {
+            _config.Data.Labels.Add(value.Option.Length < 20 ? value.Option : value.Option.Substring(0, 20));
+        }
+        BarDataset<int> dataset;
+        if (ShowAsAbsolute == true)
+        {
+            dataset = new BarDataset<int>(Question.Summery.Values.Select(x => x.VotesCasted).ToArray(), false)
+            {
+                BackgroundColor = Question.Summery.Values.Select(x => ColorUtil.RandomColorString()).ToArray(),
+            };
+        }
+        else
+        {
+            _config.Options.Scales = new BarScales
+            {
+                YAxes = new List<CartesianAxis> {
+                        {
+                            new LinearCartesianAxis
+                            {
+                                Ticks = new LinearCartesianTicks
+                                {
+                                    Callback = new DelegateHandler<AxisTickCallback>((value, index, values) => $"{value} %"),
+                                }
+                            }
+                        }
+                }
+            };
+
+            dataset = new BarDataset<Int32>(Question.Summery.Values.Select(
+        x => (Int32)Math.Round(x.VotesCasted * 100.0 / x.TotalVotes, 0)).ToArray(), false)
+            {
+                BackgroundColor = Question.Summery.Values.Select(x => ColorUtil.RandomColorString()).ToArray(),
+            };
+        }
+
+        _config.Data.Datasets.Add(dataset);
+
+    }
+}

@@ -1,0 +1,141 @@
+@page "/Survey"
+@inject SurveyService service
+ 
+@if (_isLoading == true)
+{
+    <div class="d-flex align-center flex-column ma-10">
+        <MudPaper Class="d-flex justify-center flex-column pa-10" Elevation="5">
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" Style="height:150px;width:150px;" />
+            <MudText Typo="Typo.subtitle1" Class="mt-4 text-center">Data is loading...</MudText>
+        </MudPaper>
+    </div>
+}
+else
+{
+
+<MudGrid>
+    <MudItem Class="pa-10" xs="12" sm="6" md="6" lg="9">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h4">About the survey</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText Typo="Typo.subtitle1">
+                    Thank you for your participating in the survey. It helped a lot to figure out what direction this project should take. I genuinely appreciate your time.
+                </MudText>
+                <MudText Typo="Typo.body2">
+                    You can see the result of the survey. Each diagram has a "timeseries" mode, where you can see how the results change over time.
+                </MudText>
+                <MudText Typo="Typo.body2">
+                    The survey is still open and if you haven't voted yet, feel free to do it. The results are not shown immediately. I update them manually.
+                </MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudLink Color="Color.Primary" Typo="Typo.button" Href="https://forms.gle/BgFjHiB2WQEr5Tnn7" Target="_blank"> Take the Survey</MudLink>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+    <MudItem Class="pa-10" xs="12" sm="6" md="6" lg="3">
+        <div class="d-flex flex-column">
+            <InfoCard Icon="@Icons.Custom.Uncategorized.AlertSuccess" Color="mud-theme-success" Headline="Participants:">
+                <span>@_results.ParticipantAmount</span>
+            </InfoCard>
+            <InfoCard Icon="@Icons.Material.Filled.CalendarToday" Color="mud-theme-info mt-4" Headline="Duration">
+                <span>@($"{_results.FirstVote.ToShortDateString()} - {_results.LastVote.ToShortDateString()}")</span>
+            </InfoCard>
+        </div>
+    </MudItem>
+    @{ Int32 questionNumber = 1; }
+    @foreach (var item in _results.Questions)
+    {
+        <MudItem Class="pa-10" xs="12" md="12" lg="6">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6" Class="mr-3">Q@(questionNumber++): @item.Name</MudText>
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        <MudSwitch Checked="@_displayDict[item]" CheckedChanged="(Boolean e) => AsTimeSeriesChanged(item)" Label="As Timeseries" />
+                    </CardHeaderActions>
+                </MudCardHeader>
+
+                <MudCardContent>
+                    @if (item.IsMultipleChoice == false)
+                    {
+                        @if (_displayDict[item] == false)
+                        {
+                            <QuestionAsPieChart Question="item" />
+                        }
+                        else
+                        {
+                            <QuestionTimelineAsPieChart Question="item" />
+                        }
+                    }
+                    else
+                    {
+                        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true">
+                            <MudTabPanel Text="Abolute">
+                                @if (_displayDict[item] == false)
+                                {
+                                    <QuestionAsBarChart ShowAsAbsolute="true" Question="item" />
+                                }
+                                else
+                                {
+                                    <QuestionTimelineAsBarChart ShowAsAbsolute="true" Question="item" />
+                                }
+                            </MudTabPanel>
+                            <MudTabPanel Text="Relative">
+                                @if (_displayDict[item] == false)
+                                {
+                                    <QuestionAsBarChart ShowAsAbsolute="false" Question="item" />
+                                }
+                                else
+                                {
+                                    <QuestionTimelineAsBarChart ShowAsAbsolute="false" Question="item" />
+
+                                }
+                            </MudTabPanel>
+                        </MudTabs>
+
+
+                    }
+                </MudCardContent>
+                @*<MudCardActions>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary">Read More</MudButton>
+                    </MudCardActions>*@
+            </MudCard>
+        </MudItem>
+
+    }
+</MudGrid>
+}
+
+
+
+
+@code {
+    private Boolean _isLoading = true;
+
+    private SurveyResults _results;
+
+    private Dictionary<Question, Boolean> _displayDict = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _results = await service.LoadSurveyData();
+        _displayDict = _results.Questions.ToDictionary(x => x, x => false);
+
+        _isLoading = false;
+
+    }
+
+    private void AsTimeSeriesChanged(Question question)
+    {
+        _displayDict[question] = !_displayDict[question];
+    }
+
+}

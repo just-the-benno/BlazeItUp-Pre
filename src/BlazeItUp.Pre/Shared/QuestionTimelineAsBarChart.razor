@@ -1,0 +1,172 @@
+﻿@using ChartJs.Blazor.BarChart
+@using ChartJs.Blazor.Interop;
+@using ChartJs.Blazor.Common.Handlers
+@using ChartJs.Blazor.Common.Axes
+@using ChartJs.Blazor.Common.Axes.Ticks
+
+@if (_config != null)
+{
+    <div class="d-flex  flex-row justify-end align-center mt-4">
+        <div class="flex-grow-1 flex-shrink-1">
+            <Chart @ref="_chart" Config="_config"></Chart>
+        </div>
+        @*<MudList Dense="false">
+                @foreach (var item in _legend)
+                {
+                    <MudListItem>
+                        <MudChip Color="Color.Transparent" Style="@($"background: {item.color}")">
+                            @item.amount
+                        </MudChip>
+                            @item.label
+                    </MudListItem>
+                }
+
+            </MudList>*@
+    </div>
+
+}
+
+<ChartPlayer MaxSteps="@(Question != null ? Question.Answers.Count : 1)" CurrentStepChanged="SetChartData" />
+
+
+@code {
+
+    private BarConfig _config;
+    private Chart _chart;
+
+    [Parameter]
+    public Question Question { get; set; }
+
+    [Parameter]
+    public Boolean ShowAsAbsolute { get; set; } = true;
+
+    private DateTime _currentTime;
+
+    private List<(String label, String color, Int32 amount)> _legend = new();
+
+    private async Task SetChartData(Int32 step)
+    {
+        _currentTime = Question.Answers.Keys.ElementAt(step);
+
+        var summery = Question.GetSummeryUntil(_currentTime);
+
+        BarDataset<int> dataset = _config.Data.Datasets[0] as BarDataset<int>;
+        dataset.Clear();
+        if(ShowAsAbsolute == true)
+        {
+            dataset.AddRange(summery.Select(x => x.VotesCasted).ToArray());
+        }
+        else
+        {
+            dataset.AddRange(summery.Select(x =>
+            (Int32)Math.Round(x.VotesCasted * 100.0 / x.TotalVotes, 0)).ToArray());
+        }
+
+        if (_chart != null)
+        {
+            await _chart.Update();
+        }
+
+        //Int32 index = 0;
+        //_legend.Clear();
+        //foreach (var item in summery)
+        //{
+        //    _legend.Add((item.Option, existingColors[index++], item.VotesCasted));
+        //}
+    }
+
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Question == null)
+        {
+            return;
+        }
+
+        _currentTime = Question.Answers.Keys.First();
+
+        if (_config == null)
+        {
+            _config = new BarConfig
+            {
+                Options = new BarOptions
+                {
+                    Responsive = true,
+                    Title = new OptionsTitle
+                    {
+                        Display = false,
+                    },
+                    Legend = new Legend
+                    {
+                        Display = false,
+                    },
+                },
+            };
+        }
+
+        if (ShowAsAbsolute == false)
+        {
+            _config.Options.Scales = new BarScales
+            {
+                YAxes = new List<CartesianAxis> {
+                        {
+                            new LinearCartesianAxis
+                            {
+                                Ticks = new LinearCartesianTicks
+                                {
+                                    Callback = new DelegateHandler<AxisTickCallback>((value, index, values) => $"{value} %"),
+                                    Min = 0,
+                                    Max = 100,
+                                },
+                            }
+                        }
+                }
+            };
+        }
+        else
+        {
+            _config.Options.Scales = new BarScales
+            {
+                YAxes = new List<CartesianAxis> { new LinearCartesianAxis() }
+            };
+        }
+
+        if (Question == null) { return; }
+
+        if(_config.Data.Datasets.Count == 0)
+        {
+            foreach (var value in Question.Summery.Values)
+            {
+                String valueToAdd = value.Option.Length < 20 ? value.Option : value.Option.Substring(0, 20);
+                if (_config.Data.XLabels.Contains(valueToAdd) == false)
+                {
+                    _config.Data.XLabels.Add(valueToAdd);
+                }
+            }
+
+            _config.Data.Datasets.Add(new BarDataset<int>()
+            {
+                BackgroundColor = new IndexableOption<string>(
+                    Question.Summery.Values.Select(x => ColorUtil.RandomColorString()).ToArray())
+            });
+        }
+
+        if (ShowAsAbsolute == true && _config.Data.Datasets.Count == 1)
+        {
+            (_config.Options.Scales.YAxes[0] as LinearCartesianAxis).Ticks = new LinearCartesianTicks
+            {
+                Min = 0,
+                Max = Question.Summery.Values.Select(x => x.TotalVotes).Max(),
+            };
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await SetChartData(0);
+    }
+}

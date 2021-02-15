@@ -1,0 +1,106 @@
+﻿@inject MenuService menuService
+@inject HttpClient client
+@inject ISnackbar snackbar
+
+<MudDivider />
+<MudContainer Class="mt-5">
+    <div class="docs-footer">
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.h4">
+                    Blaze It Up
+                </MudText>
+                <MudText Typo="Typo.subtitle1" Class="mt-3">
+                    Blaze It Up (current working title) is a free, community-driven project to support .NET devs in learning Blazor and unleashing its full potential. The intention is to create an excellent source for tutorials, interviews, and opinions around Blazor.
+                </MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.h5">
+                    Newsletter
+                </MudText>
+                <MudText Typo="Typo.subtitle1" Class="mt-3">
+                    If you want to get the latest news about the project, sign up for the newsletter
+                </MudText>
+                <EditForm class="d-flex flex-row align-center" Model="_model" OnValidSubmit="OnValidSubmit">
+                    <DataAnnotationsValidator />
+                    <MudTextField InputType="InputType.Email" @bind-Value="_model.Email" For="@(() => _model.Email)" Label="Your address" Variant="Variant.Text"></MudTextField>
+                    <div class="ml-3">
+                        <MudFab Icon="@Icons.Material.Filled.Send" Label="Sign up" ButtonType="ButtonType.Submit" Color="Color.Primary" Class="ml-auto" Disabled="@(_context.Validate() == false || _isSending == true)">Sign up</MudFab>
+                    </div>
+                </EditForm>
+            </MudItem>
+            <MudItem xs="12" Class="mt-5">
+                <ul class="d-flex flex-row justify-center">
+                    @foreach (var item in menuService.PageLinks)
+                    {
+                        <li class="ml-3 mr-3">
+                            <MudLink Color="Color.Primary" Typo="Typo.caption" Href="@item.Href"> @item.Title</MudLink>
+                        </li>
+                    }
+                </ul>
+            </MudItem>
+        </MudGrid>
+    </div>
+</MudContainer>
+
+@code {
+
+    private SignupNewsLetterModel _model = new();
+    private EditContext _context;
+
+    protected override void OnInitialized()
+    {
+        _model = new SignupNewsLetterModel();
+        _context = new EditContext(_model);
+
+        snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+
+        base.OnInitialized();
+    }
+
+    private class EmailNewsLetterRequest
+    {
+        public String Address { get; set; }
+    }
+
+    private bool _isSending = false;
+
+    private async Task OnValidSubmit()
+    {
+        _isSending = true;
+        snackbar.Clear();
+        await InvokeAsync(StateHasChanged);
+
+        try
+        {
+            var response = await client.PostAsJsonAsync<EmailNewsLetterRequest>(
+             "https://newsletter-adder.azurewebsites.net/api/newsletter/blaze-it-up", new EmailNewsLetterRequest
+             {
+                 Address = _model.Email
+             });
+
+            response.EnsureSuccessStatusCode();
+
+            Boolean result = await response.Content.ReadFromJsonAsync<Boolean>();
+            if (result == true)
+            {
+                snackbar.Add("Successfuly signed up for the newsletter", Severity.Success);
+                _model = new SignupNewsLetterModel();
+            }
+            else
+            {
+                snackbar.Add("Your addres is already part of the newsletter", Severity.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add("Something went wrong", Severity.Error);
+            Console.WriteLine(ex.ToString());
+        }
+        finally
+        {
+            _isSending = false;
+        }
+    }
+
+} 

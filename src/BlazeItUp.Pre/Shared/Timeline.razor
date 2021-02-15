@@ -1,0 +1,42 @@
+﻿
+@if (Elements != null && Elements.Any())
+{
+    <div class="timeline-wrap @Class">
+        <div class="timeline-flex-box">
+            <div class="d-flex timeline">
+            </div>
+        </div>
+        <div class="d-flex flew-row flex-grow-1 flex-shrink-1">
+            @{ Int32 index = 0; }
+            @foreach (var item in Elements)
+            {
+                <div class="d-flex flex-grow-1 flex-shrink-1 @( index == 0 ? "justify-start" : (index == Elements.Count - 1 ? "justify-end" : "justify-center" ))">
+                    <div class="d-flex flex-column align-center">
+                        <MudAvatar Color="@(item.IsCompleted == true ? Color.Success : Color.Primary)">
+                            <MudIcon Icon="@item.Symbol" />
+                        </MudAvatar>
+                        <MudText Typo="Typo.subtitle2">@item.Name</MudText>
+                        @if (item.FinishedAt.HasValue == true)
+                        {
+                            <MudText Typo="Typo.caption">@item.FinishedAt.Value.ToString("MMM yyyy")</MudText>
+                        }
+                        @if(item.IsCompleted == true)
+                        {
+                            <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.Check" />
+                        }
+                    </div>
+                </div>
+
+                index++;
+            }
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public ICollection<TimelineElement> Elements { get; set; }
+
+    [Parameter]public String Class { get; set; }
+}

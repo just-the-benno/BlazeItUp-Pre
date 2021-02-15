@@ -1,0 +1,74 @@
+@page "/Contribute"
+
+<MudCard Class="ma-10 pa-3">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h4">Your help is greatly appreciated</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <blockquote>
+            If you want to go fast, go alone. If you want to go far, go together.
+        </blockquote>
+        <MudText Typo="Typo.body1">
+            With the creativity, compassion, knowledge, and the verve of many, we can create a unique project with fantastic content that helps the dev community to see and experience the potential of Blazor.
+        </MudText>
+        <MudText Typo="Typo.body1">
+            I believe that everyone can contribute to this project — the level of experience, professionalism don't matter. There are always things that every one of us can do. Here are some examples of what you can play.
+        </MudText>
+    </MudCardContent>
+    <MudCardActions>
+        <MudLink Color="Color.Primary" Typo="Typo.button" Href="/Contact"> Get in touch</MudLink>
+    </MudCardActions>
+</MudCard>
+
+<MudGrid Class="pa-10">
+    @foreach (var item in RandomizeRoles())
+    {
+        <MudItem xs="12" sm="6">
+            <MudCard Style="height: 100%">
+                <MudCardContent>
+                    <div class="d-flex flex-row justify-center">
+                        <i class="ma-10 contributor-role-icon fas @item.Icon"></i>
+                    </div>
+                    <MudText Typo="Typo.h5" Class="contributor-role-header">@item.Name</MudText>
+                    <MudText Typo="Typo.body2">@item.Description</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>
+
+
+@code {
+
+    public record SupporterRole(String Name, String Icon, String Description);
+
+    private List<SupporterRole> _roles = new List<SupporterRole>
+{
+        new SupporterRole("Communicator","fa-bullhorn","Communicators contribute by sharing content with their community, whether by posting it on social media channels, chatting with friends or colleagues, and connecting community and creator. There are vital for a healthy exchange and a flow of new ideas."),
+        new SupporterRole("Strategist","fa-chess-knight","A strategist creates the strategy - the long term evolution - of the project.  Their inputs drive the decision on what and where to go next.  Where could valuable alliance forged, what are spaces worth exploring? Besides, they develop the structures so that the other roles can flourish. "),
+        new SupporterRole("Creator","fa-feather","Creators want to share their knowledge with the community by creating awesome and enjoyable content. This content could be a text, like in a post. It can be a video tutorial, a story, a podcast, or whatever you have in mind."),
+        new SupporterRole("Reviewer","fa-search","As a reviewer, you ensure that the content is free of technical errors, presented well, easy to follow end fun to read, listen or watch. With your constructive feedback, you help the creators create better content and help the community by providing high-quality content."),
+        new SupporterRole("Interviewee","fa-user-astronaut","We all have stories to tell, and each is interesting and worth telling. Blaze It Up can be a place to tell your story related to Blazor. Don't hesitate to reach out. "),
+        new SupporterRole("Designer","fa-palette","We may create amazing content, helpful tutorials, and fascinating interviews. Still, if the content is not presented well, a portion of the potential will be unused. However, with a decent design, charming illustrations, and vibrant appearance, we can inspire even better.  Help us to create this experience."),
+    };
+
+    private List<SupporterRole> RandomizeRoles()
+    {
+        Random random = new Random();
+        List<SupporterRole> copy = new List<SupporterRole>(_roles);
+        List<SupporterRole> target = new List<SupporterRole>(copy.Count);
+
+        while (copy.Count > 0)
+        {
+            Int32 index = random.Next(0, copy.Count);
+            var role = copy[index];
+            copy.RemoveAt(index);
+            target.Add(role);
+        }
+
+        return target;
+    }
+
+}

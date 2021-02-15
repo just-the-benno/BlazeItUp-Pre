@@ -1,0 +1,14 @@
+﻿@using System.Linq
+@inject MenuService menuService
+ 
+<MudNavMenu Class="mudblazor-navmenu">
+    <div class="docs-nav-fader"></div>
+
+    @foreach (var link in menuService.PageLinks)
+    {
+        <MudNavLink Href="@link.Href" Icon="@link.Icon">@link.Title</MudNavLink>
+    }
+
+</MudNavMenu>
+
+<div class="docs-nav-filler"></div>

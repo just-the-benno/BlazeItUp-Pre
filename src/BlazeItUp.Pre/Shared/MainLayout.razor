@@ -1,0 +1,61 @@
+@inherits LayoutComponentBase
+@inject NavigationManager navManager
+ 
+<MudLayout Class="d-flex">
+
+    <MudAppBar Color="Color.Primary" Fixed="true">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle" />
+        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+
+        </MudHidden>
+        <MudText Typo="Typo.h5"><AppTitle /></MudText>
+        <MudAppBarSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/just-the-benno/BlazeItUp-Pre" Target="_blank" />
+    </MudAppBar>
+
+    <MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
+        <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
+            <MudText Typo="Typo.h3">BlazeItUp</MudText>
+        </MudDrawerHeader>
+        <NavMenu @ref="@_navMenuRef" />
+    </MudDrawer>
+    <MudMainContent Class="mudblazor-main-content d-flex flex-column">
+        <div style="background: #f6f7fb" class="flex-grow-1 flex-shrink-1">
+            @Body
+        </div>
+        <MudScrollToTop TopOffset="400">
+            <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
+        </MudScrollToTop>
+        <Footer />
+    </MudMainContent>
+</MudLayout>    
+
+@code {
+
+    private bool _drawerOpen = false;
+    private NavMenu _navMenuRef;
+
+    [Inject] private NavigationManager NavigationManager { get; set; }
+
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    protected override void OnInitialized()
+    {
+        String currentRelativeUri = navManager.ToBaseRelativePath(navManager.Uri);
+
+        if (currentRelativeUri != "" && currentRelativeUri != "About")
+        {
+            _drawerOpen = true;
+        };
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+
+    }
+
+}

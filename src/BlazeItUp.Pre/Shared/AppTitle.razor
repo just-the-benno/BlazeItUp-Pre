@@ -1,0 +1,29 @@
+﻿@inject NavigationManager navManager
+@inject MenuService menuService
+@implements IDisposable
+
+<span>@_title</span>
+
+@code {
+    private String _title;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _title = menuService.GetTileFromPath(navManager.ToBaseRelativePath(navManager.Uri));
+        navManager.LocationChanged += LocationChanged;
+    }
+
+    private async void LocationChanged(Object notUsed, LocationChangedEventArgs args)
+    {
+        String location = navManager.ToBaseRelativePath(args.Location);
+        _title = menuService.GetTileFromPath(location);
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        navManager.LocationChanged -= LocationChanged;
+    }
+}

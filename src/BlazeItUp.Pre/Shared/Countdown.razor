@@ -1,0 +1,57 @@
+﻿@using System.Threading
+@implements IDisposable
+
+<div class="d-flex flex-row mt-5">
+    <div class="flex-grow-1 flex-shrink-1">
+        <p class="value">@_timeLeft.Days</p>
+        <p class="caption">Days</p>
+    </div>
+    <div class="flex-grow-1 flex-shrink-1">
+        <p class="value">@_timeLeft.Hours</p>
+        <p class="caption">Hours</p>
+    </div>
+    <div class="flex-grow-1 flex-shrink-1">
+        <p class="value">@_timeLeft.Minutes</p>
+        <p class="caption">Minutes</p>
+    </div>
+    <div class="flex-grow-1 flex-shrink-1">
+        <p class="value">@_timeLeft.Seconds</p>
+        <p class="caption">Seconds</p>
+    </div>
+</div>
+
+@code {
+
+    private TimeSpan _timeLeft;
+    private Timer _timer;
+
+    [Parameter]
+    public DateTime End { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        _timeLeft = End - DateTime.Now;
+
+        if(_timer != null)
+        {
+            _timer.Dispose();
+        }
+
+        _timer = new Timer(TimerTicked, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+
+        base.OnParametersSet();
+    }
+
+    private async void TimerTicked(Object unused)
+    {
+        _timeLeft = End - DateTime.Now;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _timer.Dispose();
+        _timer = null;
+    }
+
+}

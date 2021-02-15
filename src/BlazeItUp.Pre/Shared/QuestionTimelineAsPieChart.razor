@@ -1,0 +1,139 @@
+﻿@using ChartJs.Blazor.PieChart
+
+@if(_config != null)
+{ 
+<div class="d-flex  flex-row justify-end align-center">
+    <div class="flex-grow-1 flex-shrink-1">
+        <Chart @ref="_chart" Config="_config"></Chart>
+    </div>
+    <MudList Dense="false">
+        @foreach (var item in _legend)
+        {
+            <MudListItem>
+                <MudChip Color="Color.Transparent" Style="@($"background: {item.color}")">
+                    @item.amount
+                </MudChip>
+                    @item.label
+            </MudListItem>
+        }
+
+    </MudList>
+</div>
+  
+}
+
+<ChartPlayer MaxSteps="@(Question != null ? Question.Answers.Count : 1)" CurrentStepChanged="SetChartData" />
+
+
+@code {
+
+    private PieConfig _config;
+    private Chart _chart;
+
+    [Parameter]
+    public Question Question { get; set; }
+
+    private DateTime _currentTime;
+
+    private List<(String label, String color, Int32 amount)> _legend = new();
+
+    private async Task SetChartData(Int32 step)
+    {
+        _currentTime = Question.Answers.Keys.ElementAt(step);
+
+        var summery = Question.GetSummeryUntil(_currentTime);
+
+        foreach (var value in summery)
+        {
+            String valueToAdd = value.Option.Length < 20 ? value.Option : value.Option.Substring(0, 20);
+            if(_config.Data.Labels.Contains(valueToAdd) == false)
+            {
+                _config.Data.Labels.Add(valueToAdd);
+            }
+        }
+
+        foreach (var item in _config.Data.Labels.ToList())
+        {
+            if(summery.Select(x => x.Option).ToHashSet().Contains(item) == false)
+            {
+                _config.Data.Labels.Remove(item);
+            }
+        }
+
+        var existingColors = new List<String>();
+        if(_config.Data.Datasets.Count > 0)
+        {
+            existingColors.AddRange((_config.Data.Datasets[0] as PieDataset<int>).BackgroundColor.IndexedValues);
+        }
+
+        while (existingColors.Count < summery.Count())
+        {
+            existingColors.Add(ColorUtil.RandomColorString());
+        }
+
+        if(_config.Data.Datasets.Count == 0)
+        {
+            PieDataset<int> dataset = new PieDataset<int>(summery.Select(x => x.VotesCasted).ToArray(), false)
+            {
+                BackgroundColor = new IndexableOption<string>(existingColors.ToArray())
+            };
+
+            _config.Data.Datasets.Add(dataset);
+        }
+        else
+        {
+            PieDataset<int> dataset = _config.Data.Datasets[0] as PieDataset<int>;
+            dataset.Clear();
+            dataset.AddRange(summery.Select(x => x.VotesCasted).ToArray());
+            dataset.BackgroundColor = new IndexableOption<string>(existingColors.ToArray());
+        }
+
+        if(_chart != null)
+        {
+            await _chart.Update();
+        }
+
+        Int32 index = 0;
+        _legend.Clear();
+        foreach (var item in summery)
+        {
+            _legend.Add((item.Option, existingColors[index++], item.VotesCasted));
+        }
+    }
+
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Question == null)
+        {
+            return;
+        }
+
+        _currentTime = Question.Answers.Keys.First();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        _config = new PieConfig
+        {
+            Options = new PieOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = false,
+                },
+                Legend = new Legend
+                {
+                    Display = false,
+                }
+            },
+        };
+
+        await SetChartData(0);
+    }
+}

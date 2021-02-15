@@ -1,0 +1,53 @@
+﻿@using ChartJs.Blazor.PieChart
+
+@if (_config != null)
+{
+    <Chart Config="_config"></Chart>
+}
+
+@code {
+
+    private PieConfig _config;
+
+    [Parameter]
+    public Question Question { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Question == null)
+        {
+            return;
+        }
+
+        if (_config != null)
+        {
+            return;
+        }
+
+        _config = new PieConfig
+        {
+            Options = new PieOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = false,
+                }
+            }
+        };
+
+        foreach (var value in Question.Summery.Values)
+        {
+            _config.Data.Labels.Add(value.Option.Length < 20 ? value.Option : value.Option.Substring(0, 20));
+        }
+
+        PieDataset<int> dataset = new PieDataset<int>(Question.Summery.Values.Select(x => x.VotesCasted).ToArray(), false)
+        {
+            BackgroundColor = Question.Summery.Values.Select(x => ColorUtil.RandomColorString()).ToArray()
+        };
+
+        _config.Data.Datasets.Add(dataset);
+    }
+}

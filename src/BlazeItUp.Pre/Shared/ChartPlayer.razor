@@ -1,0 +1,113 @@
+﻿@using System.Threading
+@implements IDisposable
+
+<div class="d-flex flex-row justify-end align-center">
+    <MudFab Icon="@Icons.Material.Filled.FastRewind" Size="Size.Small" OnClick="FastRewind" />
+    @if (_isPlaying == false && _isStopped == false)
+    {
+        <MudFab Class="ml-4" Icon="@Icons.Material.Filled.PlayArrow" Color="Color.Primary" OnClick="Play" Size="Size.Small" />
+    }
+    @if (_isPlaying == true && _isStopped == false)
+    {
+        <MudFab Class="ml-4" Icon="@Icons.Material.Filled.Pause" Size="Size.Small" OnClick="TooglePause" />
+    }
+    @if (_isStopped == true)
+    {
+        <MudFab Class="ml-4" Icon="@Icons.Material.Filled.Replay" Color="Color.Primary" OnClick="Replay" Size="Size.Small" />
+    }
+    <span class="ml-4">@(CurrentStep + 1) out @MaxSteps</span>
+    <MudFab Class="ml-4" Icon="@Icons.Material.Filled.FastForward" Size="Size.Small" OnClick="FastForward" />
+</div>
+
+@code {
+
+    private Boolean _isPlaying = false;
+    private Boolean _isStopped = false;
+    private Timer _timer;
+
+    [Parameter]
+    public Int32 CurrentStep { get; set; } = 0;
+
+    [Parameter]
+    public EventCallback<int> CurrentStepChanged { get; set; }
+
+    [Parameter]
+    public Int32 MaxSteps { get; set; } = 1;
+
+    private void Play()
+    {
+        if (_timer != null)
+        {
+            _timer.Dispose();
+        }
+
+        _timer = new Timer((e) => GoToNextStep(), null, 0, 1000);
+        _isPlaying = true;
+        _isStopped = false;
+    }
+
+    async Task UpdateCurrentStep(Int32 value)
+    {
+        CurrentStep = value;
+        await CurrentStepChanged.InvokeAsync(value);
+    }
+
+    private async Task Replay()
+    {
+        await UpdateCurrentStep(0);
+        await FastRewind();
+        Play();
+    }
+
+    private void TooglePause()
+    {
+        if (_isPlaying == true)
+        {
+            _timer.Change(Timeout.Infinite, Timeout.Infinite);
+            _isPlaying = false;
+        }
+        else
+        {
+            _isPlaying = true;
+            _timer.Change(0, 1000);
+        }
+    }
+
+    private async Task FastForward()
+    {
+        await UpdateCurrentStep(MaxSteps - 1);
+        Stop();
+    }
+
+    private async Task FastRewind()
+    {
+        await UpdateCurrentStep(0);
+        Stop();
+        _isStopped = false;
+    }
+
+    private void Stop()
+    {
+        _isPlaying = false;
+        _isStopped = true;
+        _timer?.Dispose();
+    }
+
+    private async void GoToNextStep()
+    {
+        await UpdateCurrentStep(CurrentStep + 1);
+
+        if (CurrentStep == MaxSteps - 1)
+        {
+            Stop();
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}
