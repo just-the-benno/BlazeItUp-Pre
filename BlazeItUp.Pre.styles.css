@@ -1,0 +1,202 @@
+/* /Shared/Countdown.razor.rz.scp.css */
+p[b-dp35aludex] {
+    text-align: center;
+}
+
+.value[b-dp35aludex] {
+
+}
+
+.caption[b-dp35aludex] {
+    text-transform: uppercase;
+}
+/* /Shared/MainLayout.razor.rz.scp.css */
+.page[b-kv2ztob8gz] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.main[b-kv2ztob8gz] {
+    flex: 1;
+}
+
+.sidebar[b-kv2ztob8gz] {
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+}
+
+.top-row[b-kv2ztob8gz] {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #d6d5d5;
+    justify-content: flex-end;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+}
+
+    .top-row[b-kv2ztob8gz]  a, .top-row .btn-link[b-kv2ztob8gz] {
+        white-space: nowrap;
+        margin-left: 1.5rem;
+    }
+
+    .top-row a:first-child[b-kv2ztob8gz] {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+@media (max-width: 640.98px) {
+    .top-row:not(.auth)[b-kv2ztob8gz] {
+        display: none;
+    }
+
+    .top-row.auth[b-kv2ztob8gz] {
+        justify-content: space-between;
+    }
+
+    .top-row a[b-kv2ztob8gz], .top-row .btn-link[b-kv2ztob8gz] {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 641px) {
+    .page[b-kv2ztob8gz] {
+        flex-direction: row;
+    }
+
+    .sidebar[b-kv2ztob8gz] {
+        width: 250px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .top-row[b-kv2ztob8gz] {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .main > div[b-kv2ztob8gz] {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }
+}
+/* /Shared/NavMenu.razor.rz.scp.css */
+.navbar-toggler[b-836di1c151] {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-row[b-836di1c151] {
+    height: 3.5rem;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.navbar-brand[b-836di1c151] {
+    font-size: 1.1rem;
+}
+
+.oi[b-836di1c151] {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    top: -2px;
+}
+
+.nav-item[b-836di1c151] {
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+}
+
+    .nav-item:first-of-type[b-836di1c151] {
+        padding-top: 1rem;
+    }
+
+    .nav-item:last-of-type[b-836di1c151] {
+        padding-bottom: 1rem;
+    }
+
+    .nav-item[b-836di1c151]  a {
+        color: #d7d7d7;
+        border-radius: 4px;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        line-height: 3rem;
+    }
+
+.nav-item[b-836di1c151]  a.active {
+    background-color: rgba(255,255,255,0.25);
+    color: white;
+}
+
+.nav-item[b-836di1c151]  a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+@media (min-width: 641px) {
+    .navbar-toggler[b-836di1c151] {
+        display: none;
+    }
+
+    .collapse[b-836di1c151] {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+}
+/* /Shared/Timeline.razor.rz.scp.css */
+
+
+.timeline-wrap[b-tba92e7hxa] {
+    position: relative;
+}
+
+.timeline-flex-box[b-tba92e7hxa] {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.timeline[b-tba92e7hxa] {
+    height: 1px;
+    background-color: var(--mud-palette-primary);
+    margin-bottom: 37px;
+    margin-left: 20px;
+    width: calc(100% - 40px);
+}
+
+.marker[b-tba92e7hxa] {
+    z-index: 1000;
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 1.4em;
+    text-align: center;
+    position: absolute;
+    margin-left: -25px;
+    background-color: #999999;
+    border-radius: 50%;
+    top: -25px;
+
+}
+
+    .marker:hover[b-tba92e7hxa] {
+        -moz-transform: scale(1.2);
+        -webkit-transform: scale(1.2);
+        -o-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+        transform: scale(1.2);
+        -webkit-transition: all 300ms ease;
+        -moz-transition: all 300ms ease;
+        -ms-transition: all 300ms ease;
+        -o-transition: all 300ms ease;
+        transition: all 300ms ease;
+    }
+
+
+

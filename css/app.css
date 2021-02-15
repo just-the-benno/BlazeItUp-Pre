@@ -1,0 +1,79 @@
+
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+
+blockquote {
+    display: block;
+    border-width: 2px 0;
+    border-style: solid;
+    border-color: #eee;
+    padding: 1.5em 0 1.5em;
+    margin: 1.5em 0;
+    position: relative;
+    font-size: 1.3em
+}
+
+    blockquote:before {
+        content: '\201C';
+        position: absolute;
+        top: 0em;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        width: 3rem;
+        height: 2rem;
+        font: 6em/1.08em 'PT Sans', sans-serif;
+        color: #666;
+        text-align: center;
+    }
+
+    blockquote:after {
+        /*content: "\2013 \2003" attr(cite);*/
+        display: block;
+        text-align: right;
+        font-size: 0.875em;
+        color: #e74c3c;
+    }
+
+p {
+  margin-bottom: 5px!important;
+}
+
+.contributor-role-icon
+{
+    font-size:6em;
+    text-align: center;
+}
+
+.contributor-role-header {
+    text-align: center;
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+.img-responsive {
+    width: 100%;
+    height: auto;
+}
+
+.argument-item {
+    font-size: 3.3em!important;
+}
