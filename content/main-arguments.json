@@ -1,0 +1,22 @@
+[
+    {
+        "Title": "Your source to learn Blazor",
+        "Content": "Blazor is an incredible and powerful technology. However, some concepts might not be familiar for most .NET devs, or you might not see the potential. With easy to understand and enjoyable tutorial, we help you get started and find your way into the Blazor space.",
+        "Icon": "fas fa-graduation-cap"
+    },
+    {
+        "Title": "Content for each flavor",
+        "Content": "We believe each learner is different and unique. Some learn better from reading, others from listening, watching, observing, interacting, etc. To support you, we want to offer you the content in various ways to choose the format that is best for your learning approach.",
+        "Icon": "fas fa-icons"
+    },
+    {
+        "Title": "New Insights with every story",
+        "Content": "Besides tutorials, stories from other devs are a great source to boost your knowledge and awareness. By hearing these stories, stories from success - or the opposite - you can learn a lot. The same is true when you see what problems a library solves. We want to provide you access to exciting interviews, news, and stories.",
+        "Icon": "fas fa-lightbulb"
+    },
+    {
+        "Title": "Open for Contributors",
+        "Content": "The success of the projects depends on providing a wide range of content and reaching the dev community. I can't do this alone. However, I believe many great, talented people are out there and want to contribute to such a community project. You don't need to be a writer to do so. There are plenty of ways to engage, like becoming a reviewer, communicator, or strategist.",
+        "Icon": "fas fa-pizza-slice"
+    }
+]
