@@ -19,7 +19,8 @@ namespace BlazeItUp.Pre.Services
 
         public async Task<SurveyResults> LoadSurveyData()
         {
-            var rawResult = await _client.GetFromJsonAsync<List<Dictionary<String, String>>>("/sample-data/survey-data.json");
+            var rawResult = await _client.GetFromJsonAsync<List<Dictionary<String, String>>>(
+                "https://gitcdn.link/repo/just-the-benno/BlazeItUp-Pre/master/content/survey-data.json");
 
             Dictionary<String, Question> results = new();
 

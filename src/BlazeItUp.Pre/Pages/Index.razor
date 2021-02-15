@@ -1,64 +1,92 @@
 ﻿@page "/"
 @page "/About"
 
-<MudPaper Elevation="5" Class="ma-10 pa-3">
-    <MudGrid>
-        <MudItem xs="12" sm="12" md="6">
-            <MudCard Elevation="0">
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h3">Blaze It up</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    @foreach (var item in _contents)
-                    {
-                        <MudText Typo="Typo.body1">@item</MudText>
-                    }
-                </MudCardContent>
-                <MudCardActions Class="d-flex justify-space-between">
-                    <MudLink Color="Color.Primary" Underline="Underline.Always" Typo="Typo.button" Href="/Contribute">Ways to contribute</MudLink>
-                    <MudLink Color="Color.Primary" Underline="Underline.Always" Typo="Typo.button" Href="/Contact"> Get in touch</MudLink>
-                </MudCardActions>
-            </MudCard>
-        </MudItem>
-        <MudItem xs="12" sm="12" md="6">
-            <div class="d-flex flex-column">
-                <img style="max-width:650px" class="img-responsive" src="/img/elch-waiting-for-coutdown.png" />
-                <Countdown End="@timeline.Last().FinishedAt.Value" />
-            </div>
-        </MudItem>
-        <MudItem xs="12">
-            <Timeline Class="" Elements="timeline" />
-        </MudItem>
+@inject HttpClient client
+<Loading IsLoading="@_isLoading">
+    <MudPaper Elevation="5" Class="ma-10 pa-3">
+        <MudGrid>
+            <MudItem xs="12" sm="12" md="6">
+                <MudCard Elevation="0">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h3">Blaze It up</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @((MarkupString)@Markdig.Markdown.ToHtml(_content))
+                    </MudCardContent>
+                    <MudCardActions Class="d-flex justify-space-between">
+                        <MudLink Color="Color.Primary" Underline="Underline.Always" Typo="Typo.button" Href="/Contribute">Ways to contribute</MudLink>
+                        <MudLink Color="Color.Primary" Underline="Underline.Always" Typo="Typo.button" Href="/Contact"> Get in touch</MudLink>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" sm="12" md="6">
+                <div class="d-flex flex-column">
+                    <img style="max-width:650px" class="img-responsive" src="/img/elch-waiting-for-coutdown.png" />
+                    <Countdown End="@timeline.Last().FinishedAt.Value" />
+                </div>
+            </MudItem>
+            <MudItem xs="12">
+                <Timeline Class="" Elements="timeline" />
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <MudGrid Class="pa-10">
+        @foreach (var item in _mainArguments)
+        {
+            <MudItem xs="12" sm="6" lg="3">
+                <MudCard Style="height:100%">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h4">@item.Title</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <div class="d-flex flex-row justify-center mb-5">
+                            <MudIcon Icon="@item.Icon" Class="argument-item" />
+                        </div>
+                        <MudText Typo="Typo.body1"> @item.Content</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+
     </MudGrid>
-</MudPaper>
-
-<MudGrid Class="pa-10">
-    @foreach (var item in _mainArguements)
-    {
-        <MudItem xs="12" sm="6" lg="3">
-            <MudCard Style="height:100%">
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h4">@item.title</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <div class="d-flex flex-row justify-center mb-5">
-                        <MudIcon Icon="@item.icon" Class="argument-item" />
-                    </div>
-                   <MudText Typo="Typo.body1"> @item.content</MudText>
-                </MudCardContent>
-            </MudCard>
-        </MudItem>
-    }
-
-</MudGrid>
-
+</Loading>
 
 
 @code {
+
+    private class MainArgument
+    {
+        public String Title { get; set; }
+        public String Content { get; set; }
+        public String Icon { get; set; }
+    }
+
+    private IEnumerable<MainArgument> _mainArguments;
+    private String _content;
+
+    private Boolean _isLoading = false;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _isLoading = true;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _mainArguments = await client.GetFromJsonAsync<IEnumerable<MainArgument>>("https://gitcdn.link/repo/just-the-benno/BlazeItUp-Pre/master/content/main-arguments.json");
+        _content = await client.GetAsStringAsync("https://gitcdn.link/repo/just-the-benno/BlazeItUp-Pre/master/content/main-content.md");
+
+        _isLoading = false;
+    }
 
     List<TimelineElement> timeline = new List<TimelineElement>()
 {
@@ -66,22 +94,6 @@
         new TimelineElement{ Name = "Survey", Symbol =  "fas fa-poll",  IsCompleted = true },
         new TimelineElement{ Name = "Strategy", Symbol =  "fas fa-directions",  IsCompleted = false, FinishedAt = new DateTime(2021,02,28) },
         new TimelineElement{ Name = "Public Beta", Symbol =  "fas fa-rocket",  IsCompleted = false, FinishedAt = new DateTime(2021,03,31) },
-    };
-
-    List<(String title, String content, String icon)> _mainArguements = new()
-    {
-        ("Your source to learn Blazor","Blazor is an incredible and powerful technology. However, some concepts might not be familiar for most .NET devs, or you might not see the potential. With easy to understand and enjoyable tutorial, we help you get started and find your way into the Blazor space.", "fas fa-graduation-cap"),
-        ("Content for each flavor","We believe each learner is different and unique. Some learn better from reading, others from listening, watching, observing, interacting, etc. To support you, we want to offer you the content in various ways to choose the format that is best for your learning approach.", "fas fa-icons"),
-        ("New Insights with every story","Besides tutorials, stories from other devs are a great source to boost your knowledge and awareness. By hearing these stories, stories from success - or the opposite - you can learn a lot. The same is true when you see what problems a library solves. We want to provide you access to exciting interviews, news, and stories.", "fas fa-lightbulb"),
-        ("Open for Contributors","The success of the projects depends on providing a wide range of content and reaching the dev community. I can't do this alone. However, I believe many great, talented people are out there and want to contribute to such a community project. You don't need to be a writer to do so. There are plenty of ways to engage, like becoming a reviewer, communicator, or strategist.", "fas fa-pizza-slice"),
-
-    };
-
-    List<String> _contents = new List<string>
-    {
-        "Blaze it Up (working title) is a project to create a site with multiple content types to help .NET folks develop Blazor application. Beginners will find easy-to-follow tutorials, and while they learn the basics, they get access to advanced topics around Blazor. Besides, we provide insights into what's going on in the Blazor community by talking about libraries, recent developments, interviewing developers and partners.",
-        "Blaze It up will be free for everyone. It's from the community for the community.  That said, we are open to everyone who wants to contribute.  Unlike comparable services, we don't only allow you to publish your content, but we provide you with the feedback and network to create an excellent experience. Besides, It's about fun. If you enjoyed making your content, your readers/viewers would enjoy it too. ",
-        "The project is in a very early stage. While the vision becomes more apparent, we are working on a strategy and towards the first public release at the end of March 2021. Here, you can find a quick overview and updates. "
     };
 
 }

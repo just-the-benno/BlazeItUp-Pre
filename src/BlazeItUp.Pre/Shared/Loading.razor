@@ -1,0 +1,21 @@
+﻿@if (IsLoading == true)
+{
+    <div class="d-flex align-center flex-column ma-10">
+        <MudPaper Class="d-flex justify-center flex-column pa-10" Elevation="5">
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" Style="height:150px;width:150px;" />
+            <MudText Typo="Typo.subtitle1" Class="mt-4 text-center">Data is loading...</MudText>
+        </MudPaper>
+    </div>
+}
+else
+{
+    @ChildContent
+}
+
+    @code {
+
+        [Parameter] public Boolean IsLoading { get; set; } = true;
+
+
+        [Parameter]public RenderFragment ChildContent { get; set; }
+    }
