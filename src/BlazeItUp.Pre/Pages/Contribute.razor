@@ -48,16 +48,16 @@
     {
         base.OnInitialized();
 
-        _isLoading = false;
+        _isLoading = true;
     }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        _roles = await client.GetFromJsonAsync<List<SupporterRole>>("https://gitcdn.link/repo/just-the-benno/BlazeItUp-Pre/master/content/contributor-roles.json");
+        _roles = await client.GetFromJsonAsync<List<SupporterRole>>("https://cdn.jsdelivr.net/gh/just-the-benno/BlazeItUp-Pre/content/contributor-roles.json");
         RandomizeRoles();
-        _content = await client.GetAsStringAsync("https://gitcdn.link/repo/just-the-benno/BlazeItUp-Pre/master/content/contributor-content.md");
+        _content = await client.GetAsStringAsync("https://cdn.jsdelivr.net/gh/just-the-benno/BlazeItUp-Pre/content/contributor-content.md");
 
         _isLoading = false;
     }
@@ -65,7 +65,10 @@
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        RandomizeRoles();
+        if(_roles != null)
+        {
+            RandomizeRoles();
+        }
     }
 
     private List<SupporterRole> RandomizeRoles()

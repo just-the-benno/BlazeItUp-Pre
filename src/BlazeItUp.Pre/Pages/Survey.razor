@@ -110,7 +110,7 @@
         await base.OnInitializedAsync();
 
         _results = await service.LoadSurveyData();
-        _content = await client.GetAsStringAsync("https://gitcdn.link/repo/just-the-benno/BlazeItUp-Pre/master/content/survey-content.md");
+        _content = await client.GetAsStringAsync("https://cdn.jsdelivr.net/gh/just-the-benno/BlazeItUp-Pre/content/survey-content.md");
 
         _displayDict = _results.Questions.ToDictionary(x => x, x => false);
 

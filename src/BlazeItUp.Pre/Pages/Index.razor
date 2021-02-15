@@ -82,8 +82,8 @@
     {
         await base.OnInitializedAsync();
 
-        _mainArguments = await client.GetFromJsonAsync<IEnumerable<MainArgument>>("https://gitcdn.link/repo/just-the-benno/BlazeItUp-Pre/master/content/main-arguments.json");
-        _content = await client.GetAsStringAsync("https://gitcdn.link/repo/just-the-benno/BlazeItUp-Pre/master/content/main-content.md");
+        _mainArguments = await client.GetFromJsonAsync<IEnumerable<MainArgument>>("https://cdn.jsdelivr.net/gh/just-the-benno/BlazeItUp-Pre/content/main-arguments.json");
+        _content = await client.GetAsStringAsync("https://cdn.jsdelivr.net/gh/just-the-benno/BlazeItUp-Pre/content/main-content.md");
 
         _isLoading = false;
     }
