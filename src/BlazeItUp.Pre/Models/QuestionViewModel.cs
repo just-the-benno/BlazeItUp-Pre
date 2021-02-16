@@ -54,7 +54,7 @@ namespace BlazeItUp.Pre.Models
                 IsMultipleChoice = true;
             }
 
-            Answers.Add(DateTime.ParseExact(timestamp, "yyyy/MM/dd h:mm:ss tt GMT+8", null), responses);
+            Answers.Add(DateTime.ParseExact(timestamp, "yyyy/MM/dd h:mm:ss tt GMT+8", System.Globalization.CultureInfo.InvariantCulture), responses);
 
             foreach (var item in responses)
             {
