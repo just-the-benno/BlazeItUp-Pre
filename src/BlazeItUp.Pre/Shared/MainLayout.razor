@@ -14,8 +14,8 @@
     </MudAppBar>
 
     <MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
-        <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
-            <MudText Typo="Typo.h3">BlazeItUp</MudText>
+        <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="false">
+            <MudLink Typo="Typo.h3" Href="/About">BlazeItUp</MudLink>
         </MudDrawerHeader>
         <NavMenu @ref="@_navMenuRef" />
     </MudDrawer>
