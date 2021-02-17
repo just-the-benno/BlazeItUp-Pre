@@ -194,5 +194,26 @@
     "What content would you like to see?": "Tutorials;Tools;Packages and Libaries",
     "What are topics you would like to deepen your knowledge about?": "Concept around Blazor;Architecture;Authentication and Security;Advanced UI (like animations);Performance",
     "How long should a show be? (applies to podcast, live coding, and tutorial videos)": "> 30  && < 60"
+  },
+  {
+    "Timestamp": "2021/02/16 7:10:06 PM GMT+8",
+    "What type of show would you enjoy and considering helpful in mastering Blazor?": "Tutorial Videos;Blog Post",
+    "What content would you like to see?": "Tutorials;Tools;Packages and Libaries;Success (and the opposite) stories from other devs and teams",
+    "What are topics you would like to deepen your knowledge about?": "Architecture;Authentication and Security",
+    "How long should a show be? (applies to podcast, live coding, and tutorial videos)": "> 30  && < 60"
+  },
+  {
+    "Timestamp": "2021/02/16 8:39:30 PM GMT+8",
+    "What type of show would you enjoy and considering helpful in mastering Blazor?": "Tutorial Videos",
+    "What content would you like to see?": "Tutorials;Tools;Packages and Libaries;News from the Blazor community (fascinating posts, new releases etc.)",
+    "What are topics you would like to deepen your knowledge about?": "Concept around Blazor;Architecture;Advanced UI (like animations)",
+    "How long should a show be? (applies to podcast, live coding, and tutorial videos)": "> 30  && < 60"
+  },
+  {
+    "Timestamp": "2021/02/17 8:26:36 AM GMT+8",
+    "What type of show would you enjoy and considering helpful in mastering Blazor?": "Tutorial Videos",
+    "What content would you like to see?": "Tutorials;Tools;News from the Blazor community (fascinating posts, new releases etc.)",
+    "What are topics you would like to deepen your knowledge about?": "Authentication and Security;Introducing into an existing team/workflow;Performance",
+    "How long should a show be? (applies to podcast, live coding, and tutorial videos)": "< 30 minutes"
   }
-]
+ ]
